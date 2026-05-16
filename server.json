@@ -1,0 +1,21 @@
+{
+  "$schema": "https://static.modelcontextprotocol.io/schemas/2025-12-11/server.schema.json",
+  "name": "io.github.MukundaKatta/license",
+  "description": "MCP server: look up SPDX license identifiers, names, and OSI status.",
+  "version": "0.1.0",
+  "repository": {
+    "url": "https://github.com/MukundaKatta/license-mcp",
+    "source": "github"
+  },
+  "websiteUrl": "https://github.com/MukundaKatta/license-mcp",
+  "packages": [
+    {
+      "registryType": "npm",
+      "identifier": "@mukundakatta/license-mcp",
+      "version": "0.1.0",
+      "transport": {
+        "type": "stdio"
+      }
+    }
+  ]
+}
