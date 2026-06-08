@@ -28,7 +28,9 @@ export interface LicenseInfo {
 
 export function lookup(id: string): LicenseInfo | null {
   // Case-insensitive lookup (SPDX IDs are case-sensitive by spec, but
-  // pragmatic input often varies).
+  // pragmatic input often varies). Treat missing/invalid input as not-found
+  // rather than throwing, matching the documented "returns null if unknown".
+  if (typeof id !== 'string' || id.length === 0) return null;
   const exact = DATA[id];
   if (exact) {
     return { id, name: exact.name, osi_approved: !!exact.osiApproved, url: exact.url };
@@ -44,6 +46,8 @@ export function lookup(id: string): LicenseInfo | null {
 }
 
 export function search(query: string, limit: number = 25): LicenseInfo[] {
+  // Treat missing/invalid input as no matches rather than throwing.
+  if (typeof query !== 'string' || query.length === 0) return [];
   const q = query.toLowerCase();
   // Collect all matches, then sort so exact id match ranks first, then id
   // prefix, then id substring, then name substring. Keeps "MIT" → MIT at top.
@@ -61,7 +65,9 @@ export function search(query: string, limit: number = 25): LicenseInfo[] {
     }
   }
   matches.sort((a, b) => a.rank - b.rank || a.info.id.localeCompare(b.info.id));
-  return matches.slice(0, limit).map((m) => m.info);
+  // Guard against invalid limits (NaN, <=0, non-integer) so the slice stays sane.
+  const safeLimit = Number.isFinite(limit) && limit >= 1 ? Math.floor(limit) : 25;
+  return matches.slice(0, safeLimit).map((m) => m.info);
 }
 
 const server = new Server({ name: 'license', version: VERSION }, { capabilities: { tools: {} } });

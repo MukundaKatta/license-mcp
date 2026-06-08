@@ -39,3 +39,26 @@ test('search respects limit', () => {
   const out = search('license', 3);
   assert.ok(out.length <= 3);
 });
+
+test('search ranks exact id match first', () => {
+  const out = search('MIT', 5);
+  assert.equal(out[0].id, 'MIT');
+});
+
+test('search with empty query returns no matches', () => {
+  assert.deepEqual(search(''), []);
+});
+
+test('search with invalid limit falls back to default', () => {
+  const out = search('a', Number.NaN);
+  assert.ok(out.length <= 25);
+});
+
+test('lookup with non-string id returns null instead of throwing', () => {
+  assert.equal(lookup(undefined as unknown as string), null);
+  assert.equal(lookup('' as string), null);
+});
+
+test('search with non-string query returns empty instead of throwing', () => {
+  assert.deepEqual(search(undefined as unknown as string), []);
+});
